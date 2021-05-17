@@ -8,11 +8,12 @@ import java.time.LocalDate
  * @author Maxim Seredkin
  */
 class SalaryCalculator(
-        val minMonthPay: Int,
-        val maxMonthPay: Int,
-        val workDayCost: Int,
-        val overtimeDayCost: Int,
-        val quarterBonusMultiplier: Int,
+        private val minMonthPay: Int,
+        private val maxMonthPay: Int,
+        private val workDayCost: Int,
+        private val overtimeDayCost: Int,
+        private val quarterBonusMultiplier: Int,
+        private val bonusMonths: Array<Int>,
 ) {
     /**
      * Расчет заработной платы за текущий месяц
@@ -48,9 +49,6 @@ class SalaryCalculator(
     private fun isLastMonthOfQuarter(): Boolean {
         val currentMonthNumber = LocalDate.now().monthValue;
 
-        return currentMonthNumber == 3 ||
-               currentMonthNumber == 6 ||
-               currentMonthNumber == 9 ||
-               currentMonthNumber == 12;
+        return bonusMonths.contains(currentMonthNumber);
     }
 }

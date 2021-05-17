@@ -1,25 +1,36 @@
 package ru.thewhite.testingtour
 
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 /**
  * @author Maxim Seredkin
  */
 internal class SalaryCalculatorTest {
-    val minMonthPay = 15000
-    val maxMonthPay = 45000
-    val workDayCost = 1000
-    val overtimeDayCost = 1500
-    val quarterBonusMultiplier = 2
+    lateinit var salaryCalculator: SalaryCalculator;
 
-    val salaryCalculator = SalaryCalculator(
-            minMonthPay = minMonthPay,
-            maxMonthPay = maxMonthPay,
-            workDayCost = workDayCost,
-            overtimeDayCost = overtimeDayCost,
-            quarterBonusMultiplier = quarterBonusMultiplier,
-    )
+    @BeforeEach
+    internal fun setUp() {
+        salaryCalculator()
+    }
+
+    private fun salaryCalculator(minMonthPay: Int = 15000,
+                                 maxMonthPay: Int = 45000,
+                                 workDayCost: Int = 1000,
+                                 overtimeDayCost: Int = 1500,
+                                 quarterBonusMultiplier: Int = 2,
+                                 bonusMonths: Array<Int> = arrayOf()) {
+        this.salaryCalculator = SalaryCalculator(
+                minMonthPay = minMonthPay,
+                maxMonthPay = maxMonthPay,
+                workDayCost = workDayCost,
+                overtimeDayCost = overtimeDayCost,
+                quarterBonusMultiplier = quarterBonusMultiplier,
+                bonusMonths = bonusMonths
+        )
+    }
 
     // region positives
 
@@ -40,6 +51,27 @@ internal class SalaryCalculatorTest {
 
         // Assert
         Assertions.assertEquals(23000, result)
+    }
+
+    /**
+     * Расчет заработной платы за текущий месяц без премии
+     *
+     * [lastMonthOfQuarter:false]
+     * ([workDays:15] * [workDayCost:1000] + [overtimeDays:2] * [overtimeDayCost:1500]) * [quarterBonusMultiplier:2] = 36000
+     */
+    @Test
+    fun currentMonthPayWithBonus() {
+        // Arrange
+        salaryCalculator(bonusMonths = arrayOf(LocalDate.now().monthValue))
+
+        val workDays = 15
+        val overtimeDays = 2
+
+        // Act
+        val result = salaryCalculator.currentMonthPay(workDays, overtimeDays)
+
+        // Assert
+        Assertions.assertEquals(36000, result)
     }
 
     /**
