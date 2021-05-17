@@ -30,5 +30,43 @@ internal class SalaryCalculatorTest {
         Assertions.assertEquals(23000, result)
     }
 
+    /**
+     * Расчет заработной платы за текущий месяц при большом количестве отгулов
+     *
+     * [lastMonthOfQuarter:false]
+     * [workDays:5] * [workDayCost:1000] + [overtimeDays:2] * [overtimeDayCost:1500] = 8000
+     */
+    @Test
+    fun currentMonthPayForLowWork() {
+        // Arrange
+        val workDays = 5
+        val overtimeDays = 2
+
+        // Act
+        val result = salaryCalculator.currentMonthPay(workDays, overtimeDays)
+
+        // Assert
+        Assertions.assertEquals(15000, result)
+    }
+
+    /**
+     * Расчет заработной платы за текущий месяц при загрузке 200%
+     *
+     * [lastMonthOfQuarter:false]
+     * [workDays:0] * [workDayCost:1000] + [overtimeDays:31] * [overtimeDayCost:1500] = 46500
+     */
+    @Test
+    fun currentMonthPayForHeavyWork() {
+        // Arrange
+        val workDays = 0
+        val overtimeDays = 31
+
+        // Act
+        val result = salaryCalculator.currentMonthPay(workDays, overtimeDays)
+
+        // Assert
+        Assertions.assertEquals(45000, result)
+    }
+
     // endregion positives
 }
