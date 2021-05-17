@@ -7,7 +7,13 @@ import java.time.LocalDate
  *
  * @author Maxim Seredkin
  */
-class SalaryCalculator {
+class SalaryCalculator(
+        val minMonthPay: Int,
+        val maxMonthPay: Int,
+        val workDayCost: Int,
+        val overtimeDayCost: Int,
+        val quarterBonusMultiplier: Int,
+) {
     /**
      * Расчет заработной платы за текущий месяц
      *
@@ -20,11 +26,6 @@ class SalaryCalculator {
      *
      */
     fun currentMonthPay(workDays: Int, overtimeDays: Int): Int {
-        val minMonthPay = 15000
-        val maxMonthPay = 45000
-        val workDayCost = 1000
-        val overtimeDayCost = 1500
-        val quarterBonusMultiplier = 2
 
         if (workDays < 0) throw RuntimeException("Work day should be greater or equals 0");
         if (overtimeDays < 0) throw RuntimeException("Overtime day should be greater or equals 0");

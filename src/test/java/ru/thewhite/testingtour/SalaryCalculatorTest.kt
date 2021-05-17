@@ -7,7 +7,19 @@ import org.junit.jupiter.api.Test
  * @author Maxim Seredkin
  */
 internal class SalaryCalculatorTest {
-    val salaryCalculator = SalaryCalculator()
+    val minMonthPay = 15000
+    val maxMonthPay = 45000
+    val workDayCost = 1000
+    val overtimeDayCost = 1500
+    val quarterBonusMultiplier = 2
+
+    val salaryCalculator = SalaryCalculator(
+            minMonthPay = minMonthPay,
+            maxMonthPay = maxMonthPay,
+            workDayCost = workDayCost,
+            overtimeDayCost = overtimeDayCost,
+            quarterBonusMultiplier = quarterBonusMultiplier,
+    )
 
     // region positives
 
