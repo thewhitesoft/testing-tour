@@ -69,4 +69,38 @@ internal class SalaryCalculatorTest {
     }
 
     // endregion positives
+
+    // region negatives
+
+    @Test
+    fun currentMonthPayWithNegativeWorkDays() {
+        // Arrange
+        val workDays = -1
+        val overtimeDays = 2
+
+        // Act
+        val result = Assertions.assertThrows(RuntimeException::class.java) {
+            salaryCalculator.currentMonthPay(workDays, overtimeDays)
+        }
+
+        // Assert
+        Assertions.assertEquals("Work day should be greater or equals 0", result.localizedMessage)
+    }
+
+    @Test
+    fun currentMonthPayWithNegativeOvertimeDays() {
+        // Arrange
+        val workDays = 20
+        val overtimeDays = -1
+
+        // Act
+        val result = Assertions.assertThrows(RuntimeException::class.java) {
+            salaryCalculator.currentMonthPay(workDays, overtimeDays)
+        }
+
+        // Assert
+        Assertions.assertEquals("Overtime day should be greater or equals 0", result.localizedMessage)
+    }
+
+    // endregion negatives
 }
