@@ -3,9 +3,14 @@ package ru.thewhite.testingtour
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
+import java.util.function.Consumer
+import java.util.stream.Stream
 
 /**
  * @author Maxim Seredkin
@@ -40,82 +45,29 @@ internal class SalaryCalculatorTest {
 
     // region positives
 
-    /**
-     * Расчет заработной платы за текущий месяц без премии
-     *
-     * [lastMonthOfQuarter:false]
-     * [workDays:20] * [workDayCost:1000] + [overtimeDays:2] * [overtimeDayCost:1500] = 23000
-     */
-    @Test
-    fun currentMonthPayWithoutBonus() {
-        // Arrange
-        val workDays = 20
-        val overtimeDays = 2
-
-        // Act
-        val result = salaryCalculator.currentMonthPay(workDays, overtimeDays)
-
-        // Assert
-        Assertions.assertEquals(23000, result)
+    companion object {
+        @JvmStatic
+        fun currentMonthPay(): Stream<Arguments> {
+            return Stream.of(
+                    Arguments.of("currentMonthPayWithoutBonus", 20, 2, 23000, Consumer<SalaryCalculatorTest> { }),
+                    Arguments.of("currentMonthPayWithBonus", 15, 2, 36000, Consumer<SalaryCalculatorTest> { it.salaryCalculator(bonusMonths = arrayOf(5)) }),
+                    Arguments.of("currentMonthPayForLowWork", 5, 2, 15000, Consumer<SalaryCalculatorTest> { }),
+                    Arguments.of("currentMonthPayForHeavyWork", 0, 31, 45000, Consumer<SalaryCalculatorTest> { }),
+            )
+        }
     }
 
-    /**
-     * Расчет заработной платы за текущий месяц без премии
-     *
-     * [lastMonthOfQuarter:false]
-     * ([workDays:15] * [workDayCost:1000] + [overtimeDays:2] * [overtimeDayCost:1500]) * [quarterBonusMultiplier:2] = 36000
-     */
-    @Test
-    fun currentMonthPayWithBonus() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource
+    fun currentMonthPay(testName: String, workDays: Int, overtimeDays: Int, expectedResult: Int, arrangeFunc: Consumer<SalaryCalculatorTest>) {
         // Arrange
-        salaryCalculator(bonusMonths = arrayOf(5))
-
-        val workDays = 15
-        val overtimeDays = 2
+        arrangeFunc.accept(this)
 
         // Act
         val result = salaryCalculator.currentMonthPay(workDays, overtimeDays)
 
         // Assert
-        Assertions.assertEquals(36000, result)
-    }
-
-    /**
-     * Расчет заработной платы за текущий месяц при большом количестве отгулов
-     *
-     * [lastMonthOfQuarter:false]
-     * [workDays:5] * [workDayCost:1000] + [overtimeDays:2] * [overtimeDayCost:1500] = 8000
-     */
-    @Test
-    fun currentMonthPayForLowWork() {
-        // Arrange
-        val workDays = 5
-        val overtimeDays = 2
-
-        // Act
-        val result = salaryCalculator.currentMonthPay(workDays, overtimeDays)
-
-        // Assert
-        Assertions.assertEquals(15000, result)
-    }
-
-    /**
-     * Расчет заработной платы за текущий месяц при загрузке 200%
-     *
-     * [lastMonthOfQuarter:false]
-     * [workDays:0] * [workDayCost:1000] + [overtimeDays:31] * [overtimeDayCost:1500] = 46500
-     */
-    @Test
-    fun currentMonthPayForHeavyWork() {
-        // Arrange
-        val workDays = 0
-        val overtimeDays = 31
-
-        // Act
-        val result = salaryCalculator.currentMonthPay(workDays, overtimeDays)
-
-        // Assert
-        Assertions.assertEquals(45000, result)
+        Assertions.assertEquals(expectedResult, result)
     }
 
     // endregion positives
