@@ -1,5 +1,6 @@
 package ru.thewhite.testingtour
 
+import java.time.Clock
 import java.time.LocalDate
 
 /**
@@ -14,6 +15,7 @@ class SalaryCalculator(
         private val overtimeDayCost: Int,
         private val quarterBonusMultiplier: Int,
         private val bonusMonths: Array<Int>,
+        private val clock: Clock,
 ) {
     /**
      * Расчет заработной платы за текущий месяц
@@ -27,7 +29,6 @@ class SalaryCalculator(
      *
      */
     fun currentMonthPay(workDays: Int, overtimeDays: Int): Int {
-
         if (workDays < 0) throw RuntimeException("Work day should be greater or equals 0");
         if (overtimeDays < 0) throw RuntimeException("Overtime day should be greater or equals 0");
 
@@ -47,7 +48,7 @@ class SalaryCalculator(
     }
 
     private fun isLastMonthOfQuarter(): Boolean {
-        val currentMonthNumber = LocalDate.now().monthValue;
+        val currentMonthNumber = LocalDate.now(clock).monthValue;
 
         return bonusMonths.contains(currentMonthNumber);
     }

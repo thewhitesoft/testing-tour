@@ -3,7 +3,9 @@ package ru.thewhite.testingtour
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
 
 /**
  * @author Maxim Seredkin
@@ -16,19 +18,23 @@ internal class SalaryCalculatorTest {
         salaryCalculator()
     }
 
-    private fun salaryCalculator(minMonthPay: Int = 15000,
-                                 maxMonthPay: Int = 45000,
-                                 workDayCost: Int = 1000,
-                                 overtimeDayCost: Int = 1500,
-                                 quarterBonusMultiplier: Int = 2,
-                                 bonusMonths: Array<Int> = arrayOf()) {
+    private fun salaryCalculator(
+            minMonthPay: Int = 15000,
+            maxMonthPay: Int = 45000,
+            workDayCost: Int = 1000,
+            overtimeDayCost: Int = 1500,
+            quarterBonusMultiplier: Int = 2,
+            bonusMonths: Array<Int> = arrayOf(),
+            date: String = "2021-05-17T00:00:00.000Z",
+    ) {
         this.salaryCalculator = SalaryCalculator(
                 minMonthPay = minMonthPay,
                 maxMonthPay = maxMonthPay,
                 workDayCost = workDayCost,
                 overtimeDayCost = overtimeDayCost,
                 quarterBonusMultiplier = quarterBonusMultiplier,
-                bonusMonths = bonusMonths
+                bonusMonths = bonusMonths,
+                clock = Clock.fixed(Instant.parse(date), ZoneId.systemDefault())
         )
     }
 
@@ -62,7 +68,7 @@ internal class SalaryCalculatorTest {
     @Test
     fun currentMonthPayWithBonus() {
         // Arrange
-        salaryCalculator(bonusMonths = arrayOf(LocalDate.now().monthValue))
+        salaryCalculator(bonusMonths = arrayOf(5))
 
         val workDays = 15
         val overtimeDays = 2
